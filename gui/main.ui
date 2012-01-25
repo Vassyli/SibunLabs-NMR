@@ -1,0 +1,535 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <author>Basilius Sauter</author>
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>SibunLabs NMR</string>
+  </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>res/logo.png</normaloff>res/logo.png</iconset>
+  </property>
+  <property name="locale">
+   <locale language="English" country="UnitedKingdom"/>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="autoFillBackground">
+    <bool>true</bool>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <property name="spacing">
+     <number>0</number>
+    </property>
+    <property name="margin">
+     <number>0</number>
+    </property>
+    <item>
+     <widget class="NMRView" name="spectrum">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="mouseTracking">
+       <bool>true</bool>
+      </property>
+      <property name="verticalScrollBarPolicy">
+       <enum>Qt::ScrollBarAlwaysOff</enum>
+      </property>
+      <property name="horizontalScrollBarPolicy">
+       <enum>Qt::ScrollBarAlwaysOff</enum>
+      </property>
+      <property name="renderHints">
+       <set>QPainter::TextAntialiasing</set>
+      </property>
+      <property name="dragMode">
+       <enum>QGraphicsView::NoDrag</enum>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>800</width>
+     <height>26</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuSibunLabs_NMR">
+    <property name="title">
+     <string>Application</string>
+    </property>
+    <addaction name="actionNew_Workspace"/>
+    <addaction name="actionOpen_Workspace"/>
+    <addaction name="separator"/>
+    <addaction name="actionSave_Workspace"/>
+    <addaction name="separator"/>
+    <addaction name="actionClose_Workspace"/>
+    <addaction name="actionQuit"/>
+   </widget>
+   <widget class="QMenu" name="menuWorkspace">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="title">
+     <string>Workspace</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menuSpectrum">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="title">
+     <string>NMR</string>
+    </property>
+    <widget class="QMenu" name="menuView">
+     <property name="title">
+      <string>View</string>
+     </property>
+     <addaction name="actionSwitchView_FID"/>
+     <addaction name="actionSwitchView_Spectrum"/>
+    </widget>
+    <addaction name="menuView"/>
+    <addaction name="separator"/>
+    <addaction name="actionWindow_function"/>
+    <addaction name="actionFFT_from_spectrum"/>
+    <addaction name="separator"/>
+    <addaction name="actionLoad_spectrum"/>
+    <addaction name="actionFFT"/>
+    <addaction name="actionPhase"/>
+    <addaction name="separator"/>
+    <addaction name="actionPaper_Settings"/>
+    <addaction name="actionPrint_spectrum"/>
+    <addaction name="actionPrint_signals_only"/>
+    <addaction name="separator"/>
+    <addaction name="actionClose_NMR"/>
+   </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="layoutDirection">
+     <enum>Qt::LeftToRight</enum>
+    </property>
+    <property name="tearOffEnabled">
+     <bool>false</bool>
+    </property>
+    <property name="title">
+     <string>Help</string>
+    </property>
+    <addaction name="actionHelp"/>
+    <addaction name="separator"/>
+    <addaction name="actionAbout_SibunLabs_NMR"/>
+   </widget>
+   <addaction name="menuSibunLabs_NMR"/>
+   <addaction name="menuWorkspace"/>
+   <addaction name="menuSpectrum"/>
+   <addaction name="menuHelp"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QToolBar" name="toolBar">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionPick_Peak"/>
+   <addaction name="actionIntegrate"/>
+   <addaction name="separator"/>
+  </widget>
+  <widget class="QDockWidget" name="experimentDockWidget">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="floating">
+    <bool>false</bool>
+   </property>
+   <property name="features">
+    <set>QDockWidget::DockWidgetFloatable|QDockWidget::DockWidgetMovable</set>
+   </property>
+   <property name="allowedAreas">
+    <set>Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea</set>
+   </property>
+   <property name="windowTitle">
+    <string>List of experiments</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>1</number>
+   </attribute>
+   <widget class="QWidget" name="experimentDockWidgetContents">
+    <layout class="QVBoxLayout" name="verticalLayout_2">
+     <property name="spacing">
+      <number>0</number>
+     </property>
+     <property name="margin">
+      <number>0</number>
+     </property>
+     <item>
+      <widget class="QTreeWidget" name="experimentList">
+       <property name="minimumSize">
+        <size>
+         <width>299</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="editTriggers">
+        <set>QAbstractItemView::NoEditTriggers</set>
+       </property>
+       <property name="selectionBehavior">
+        <enum>QAbstractItemView::SelectRows</enum>
+       </property>
+       <property name="uniformRowHeights">
+        <bool>true</bool>
+       </property>
+       <property name="sortingEnabled">
+        <bool>true</bool>
+       </property>
+       <column>
+        <property name="text">
+         <string notr="true">Name</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Nuclei</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Solvent</string>
+        </property>
+       </column>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <action name="actionPick_Peak">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset>
+     <normaloff>res/button-peakpick-big.png</normaloff>res/button-peakpick-big.png</iconset>
+   </property>
+   <property name="text">
+    <string>Pick Peak</string>
+   </property>
+  </action>
+  <action name="actionOpen_Workspace">
+   <property name="icon">
+    <iconset>
+     <normaloff>:/trolltech/styles/commonstyle/images/standardbutton-open-32.png</normaloff>:/trolltech/styles/commonstyle/images/standardbutton-open-32.png</iconset>
+   </property>
+   <property name="text">
+    <string>Open Workspace</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
+   </property>
+  </action>
+  <action name="actionQuit">
+   <property name="icon">
+    <iconset>
+     <normaloff>:/trolltech/styles/commonstyle/images/standardbutton-close-32.png</normaloff>:/trolltech/styles/commonstyle/images/standardbutton-close-32.png</iconset>
+   </property>
+   <property name="text">
+    <string>Quit</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Q</string>
+   </property>
+  </action>
+  <action name="actionIntegrate">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset>
+     <normaloff>res/button-integrate-big.png</normaloff>res/button-integrate-big.png</iconset>
+   </property>
+   <property name="text">
+    <string>Integrate</string>
+   </property>
+   <property name="toolTip">
+    <string>Integrate from... to</string>
+   </property>
+  </action>
+  <action name="actionSave_Workspace">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset>
+     <normaloff>:/trolltech/styles/commonstyle/images/standardbutton-save-32.png</normaloff>:/trolltech/styles/commonstyle/images/standardbutton-save-32.png</iconset>
+   </property>
+   <property name="text">
+    <string>Save Workspace</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="actionClose_Workspace">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset>
+     <normaloff>:/trolltech/styles/commonstyle/images/standardbutton-close-32.png</normaloff>:/trolltech/styles/commonstyle/images/standardbutton-close-32.png</iconset>
+   </property>
+   <property name="text">
+    <string>Close Workspace</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+W</string>
+   </property>
+  </action>
+  <action name="actionNew_Workspace">
+   <property name="text">
+    <string>New Workspace</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+N</string>
+   </property>
+  </action>
+  <action name="actionWindow_function">
+   <property name="text">
+    <string>Window function</string>
+   </property>
+  </action>
+  <action name="actionPhase">
+   <property name="text">
+    <string>Phase</string>
+   </property>
+  </action>
+  <action name="actionFFT">
+   <property name="text">
+    <string>FFT from FID</string>
+   </property>
+  </action>
+  <action name="actionLoad_spectrum">
+   <property name="text">
+    <string>Load spectrum</string>
+   </property>
+  </action>
+  <action name="actionHelp">
+   <property name="text">
+    <string>Help</string>
+   </property>
+  </action>
+  <action name="actionAbout_SibunLabs_NMR">
+   <property name="text">
+    <string>About SibunLabs NMR</string>
+   </property>
+  </action>
+  <action name="actionFFT_from_spectrum">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>FFT⁻¹ from spectrum</string>
+   </property>
+  </action>
+  <action name="actionSwitchView_FID">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>FID</string>
+   </property>
+   <property name="iconVisibleInMenu">
+    <bool>true</bool>
+   </property>
+  </action>
+  <action name="actionSwitchView_Spectrum">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Spectrum</string>
+   </property>
+  </action>
+  <action name="actionPaper_Settings">
+   <property name="text">
+    <string>Print Settings</string>
+   </property>
+  </action>
+  <action name="actionPrint_spectrum">
+   <property name="text">
+    <string>Print spectrum</string>
+   </property>
+  </action>
+  <action name="actionPrint_signals_only">
+   <property name="text">
+    <string>Print signals only</string>
+   </property>
+  </action>
+  <action name="actionClose_NMR">
+   <property name="icon">
+    <iconset>
+     <normaloff>:/trolltech/styles/commonstyle/images/standardbutton-close-32.png</normaloff>:/trolltech/styles/commonstyle/images/standardbutton-close-32.png</iconset>
+   </property>
+   <property name="text">
+    <string>Close NMR</string>
+   </property>
+  </action>
+ </widget>
+ <layoutdefault spacing="3" margin="0"/>
+ <customwidgets>
+  <customwidget>
+   <class>NMRView</class>
+   <extends>QGraphicsView</extends>
+   <header>nmrView.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>actionQuit</sender>
+   <signal>activated()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>216</x>
+     <y>315</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>experimentList</sender>
+   <signal>itemDoubleClicked(QTreeWidgetItem*,int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>onExperimentClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>176</x>
+     <y>216</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>183</x>
+     <y>-11</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionOpen_Workspace</sender>
+   <signal>activated()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>onOpenWorkspace()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionClose_Workspace</sender>
+   <signal>activated()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>onCloseWorkspace()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionSave_Workspace</sender>
+   <signal>activated()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>onSaveWorkspace()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionSwitchView_FID</sender>
+   <signal>triggered(bool)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>onChangeViewToFid(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionSwitchView_Spectrum</sender>
+   <signal>triggered(bool)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>onChangeViewToSpectrum(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>onExperimentClicked()</slot>
+  <slot>onOpenWorkspace()</slot>
+  <slot>onCloseWorkspace()</slot>
+  <slot>onSaveWorkspace()</slot>
+  <slot>onChangeViewToFid(bool)</slot>
+  <slot>onChangeViewToSpectrum(bool)</slot>
+ </slots>
+</ui>

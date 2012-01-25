@@ -1,0 +1,48 @@
+
+Current Data Parameters
+NAME         strychnine                
+EXPNO                 1                
+PROCNO                1                
+
+F2 - Acquisition Parameters
+Date_          20031115                
+Time              12.04                
+INSTRUM          dpx300                
+PROBHD     5 mm QNP 1H/                
+PULPROG            zg30                
+TD                65536                
+SOLVENT           CDCl3                
+NS                   16                
+DS                    2                
+SWH            6172.839 Hz             
+FIDRES         0.094190 Hz             
+AQ            5.3084660 sec            
+RG                  362                
+DW               81.000 usec           
+DE                 6.00 usec           
+TE                300.0 K              
+D1           1.00000000 sec            
+
+============ CHANNEL f1 =============
+NUC1                 1H                
+P1                 9.30 usec           
+PL1                0.00 dB             
+SFO1        300.1318534 MHz            
+
+F2 - Processing parameters
+SI                32768                
+SF          300.1300060 MHz            
+WDW                  EM                
+SSB                   0                
+LB                 0.30 Hz             
+GB                    0                
+PC                 1.00                
+
+1D NMR plot parameters
+CX                20.00 cm             
+F1P              11.000 ppm            
+F1              3301.43 Hz             
+F2P              -1.000 ppm            
+F2              -300.13 Hz             
+PPMCM           0.60000 ppm/cm         
+HZCM          180.07800 Hz/cm          

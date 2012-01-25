@@ -1,0 +1,78 @@
+
+Current Data Parameters
+NAME         strychnine                
+EXPNO                 2                
+PROCNO                1                
+
+F2 - Acquisition Parameters
+Date_          20031115                
+Time              12.04                
+INSTRUM          dpx300                
+PROBHD     5 mm QNP 1H/                
+PULPROG        cosy45gs                
+TD                 2048                
+SOLVENT           CDCl3                
+NS                    2                
+DS                    8                
+SWH            2380.952 Hz             
+FIDRES         1.162574 Hz             
+AQ            0.4301300 sec            
+RG                203.2                
+DW              210.000 usec           
+DE                 6.00 usec           
+TE                300.0 K              
+d0           0.00000300 sec            
+D1           1.31240201 sec            
+d13          0.00000300 sec            
+D16          0.00010000 sec            
+IN0          0.00042000 sec            
+
+============ CHANNEL f1 =============
+NUC1                 1H                
+P1                 9.30 usec           
+PL1                0.00 dB             
+SFO1        300.1314113 MHz            
+
+============ GRADIENT CHANNEL ========
+P16             1000.00 usec           
+
+F1 - Acquisition parameters
+ND0                   1                
+TD                  256                
+SFO1           300.1314 MHz            
+FIDRES         9.300595 Hz             
+SW                7.933 ppm            
+
+F2 - Processing parameters
+SI                 1024                
+SF          300.1300060 MHz            
+WDW                SINE                
+SSB                   0                
+LB                 0.00 Hz             
+GB                    0                
+PC                 1.40                
+
+F1 - Processing parameters
+SI                 1024                
+MC2                  QF                
+SF          300.1300060 MHz            
+WDW                SINE                
+SSB                   0                
+LB                 0.00 Hz             
+GB                    0                
+
+2D NMR plot parameters
+CX2               15.00 cm             
+CX1               15.00 cm             
+F2PLO             8.649 ppm            
+F2LO            2595.73 Hz             
+F2PHI             0.716 ppm            
+F2HI             214.78 Hz             
+F1PLO             8.649 ppm            
+F1LO            2595.73 Hz             
+F1PHI             0.716 ppm            
+F1HI             214.78 Hz             
+F2PPMCM         0.52887 ppm/cm         
+F2HZCM        158.72942 Hz/cm          
+F1PPMCM         0.52887 ppm/cm         
+F1HZCM        158.72942 Hz/cm          

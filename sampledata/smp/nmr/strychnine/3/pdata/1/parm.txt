@@ -1,0 +1,105 @@
+
+Current Data Parameters
+NAME         strychnine                
+EXPNO                 3                
+PROCNO                1                
+
+F2 - Acquisition Parameters
+Date_          20031115                
+Time              12.21                
+INSTRUM          dpx300                
+PROBHD     5 mm QNP 1H/                
+PULPROG      invietgpsi                
+TD                 2048                
+SOLVENT           CDCl3                
+NS                    4                
+DS                   16                
+SWH            2380.952 Hz             
+FIDRES         1.162574 Hz             
+AQ            0.4301300 sec            
+RG              18390.4                
+DW              210.000 usec           
+DE                 6.00 usec           
+TE                300.0 K              
+CNST2       145.0000000                
+d0           0.00000300 sec            
+D1           1.82550895 sec            
+d4           0.00172414 sec            
+d11          0.03000000 sec            
+d13          0.00000300 sec            
+D16          0.00010000 sec            
+D24          0.00086200 sec            
+DELTA        0.00117460 sec            
+DELTA1       0.00110700 sec            
+IN0          0.00003980 sec            
+l3                   45                
+
+============ CHANNEL f1 =============
+NUC1                 1H                
+P1                 9.30 usec           
+p2                18.60 usec           
+P28             2000.00 usec           
+PL1                0.00 dB             
+SFO1        300.1314113 MHz            
+
+============ CHANNEL f2 =============
+CPDPRG2            garp                
+NUC2                13C                
+P3                 5.60 usec           
+p4                11.20 usec           
+PCPD2             65.00 usec           
+PL2               -6.00 dB             
+PL12              18.00 dB             
+SFO2         75.4733480 MHz            
+
+============ GRADIENT CHANNEL ========
+GPNAM1         SINE.100                
+GPNAM2         SINE.100                
+GPX1               0.00 %              
+GPX2               0.00 %              
+GPY1               0.00 %              
+GPY2               0.00 %              
+GPZ1              80.00 %              
+GPZ2              20.10 %              
+P16             1000.00 usec           
+
+F1 - Acquisition parameters
+ND0                   2                
+TD                  256                
+SFO1           75.47335 MHz            
+FIDRES        49.073494 Hz             
+SW              166.454 ppm            
+
+F2 - Processing parameters
+SI                 2048                
+SF          300.1300060 MHz            
+WDW               QSINE                
+SSB                   2                
+LB                 0.00 Hz             
+GB                    0                
+PC                 1.40                
+
+F1 - Processing parameters
+SI                 1024                
+MC2       echo-antiecho                
+SF           75.4677190 MHz            
+WDW               QSINE                
+SSB                   2                
+LB                 0.00 Hz             
+GB                    0                
+
+2D NMR plot parameters
+CX2               20.00 cm             
+CX1               15.00 cm             
+F2PLO             8.649 ppm            
+F2LO            2595.73 Hz             
+F2PHI             0.716 ppm            
+F2HI             214.78 Hz             
+F1PLO           157.815 ppm            
+F1LO           11909.93 Hz             
+F1PHI            -8.639 ppm            
+F1HI            -651.94 Hz             
+F2PPMCM         0.39665 ppm/cm         
+F2HZCM        119.04706 Hz/cm          
+F1PPMCM        11.09691 ppm/cm         
+F1HZCM        837.45825 Hz/cm          

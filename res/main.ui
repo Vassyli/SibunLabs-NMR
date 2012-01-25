@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <author>Basilius Sauter</author>
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>434</width>
+    <height>631</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>SibunLabs NMR</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="autoFillBackground">
+    <bool>false</bool>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <item>
+     <widget class="QWidget" name="widget" native="true">
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <widget class="QTreeWidget" name="treeWidget">
+         <column>
+          <property name="text">
+           <string notr="true">Name</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Experiment</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Kern</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Lösemittel</string>
+          </property>
+         </column>
+         <item>
+          <property name="text">
+           <string>Test</string>
+          </property>
+          <item>
+           <property name="text">
+            <string>TestNo</string>
+           </property>
+           <property name="text">
+            <string>PROTON</string>
+           </property>
+           <property name="text">
+            <string>1H</string>
+           </property>
+           <property name="text">
+            <string>CDCl3</string>
+           </property>
+          </item>
+         </item>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
+     <widget class="NMRView" name="graphicsView"/>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>434</width>
+     <height>26</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuSibunLabs_NMR">
+    <property name="title">
+     <string>SibunLabs NMR</string>
+    </property>
+    <addaction name="actionOpen_Workspace"/>
+    <addaction name="separator"/>
+    <addaction name="actionQuit"/>
+   </widget>
+   <widget class="QMenu" name="menuWorkspace">
+    <property name="title">
+     <string>Workspace</string>
+    </property>
+   </widget>
+   <addaction name="menuSibunLabs_NMR"/>
+   <addaction name="menuWorkspace"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QToolBar" name="toolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionPick_Peak"/>
+  </widget>
+  <action name="actionPick_Peak">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset>
+     <normaloff>button-peakpick-big.png</normaloff>button-peakpick-big.png</iconset>
+   </property>
+   <property name="text">
+    <string>Pick Peak</string>
+   </property>
+  </action>
+  <action name="actionOpen_Workspace">
+   <property name="text">
+    <string>Open Workspace</string>
+   </property>
+  </action>
+  <action name="actionQuit">
+   <property name="text">
+    <string>Quit</string>
+   </property>
+  </action>
+ </widget>
+ <layoutdefault spacing="3" margin="0"/>
+ <customwidgets>
+  <customwidget>
+   <class>NMRView</class>
+   <extends>QGraphicsView</extends>
+   <header>nmrview.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

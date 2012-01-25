@@ -1,0 +1,25 @@
+##TITLE= Parameter file, XWIN-NMR		Version 2.6
+##JCAMPDX= 5.0
+##DATATYPE= Parameter Values
+##ORIGIN= Bruker Analytik GmbH
+##OWNER= marat
+$$ Sat Nov 15 11:56:24 2003 CST (UT-6h)  marat@avance300
+$$ /u/prog/curdir/changer/inmrchanger/Nov15-2003-1145-marat/1/data/nmr/strychnine/3/pdata/1/curdat2
+##$CUREXP= <>
+##$DU= </u>
+##$DU2= </u>
+##$DU3= <>
+##$EXPNO= 1
+##$EXPNO2= 1
+##$EXPNO3= 0
+##$NAME= <>
+##$NAME2= <strychnine>
+##$NAME3= <>
+##$PROCNO= 1
+##$PROCNO2= 1
+##$PROCNO3= 1
+##$TYPE= <nmr>
+##$USER= <>
+##$USER2= <marat>
+##$USER3= <>
+##END=

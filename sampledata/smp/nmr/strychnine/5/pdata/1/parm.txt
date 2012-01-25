@@ -1,0 +1,59 @@
+
+Current Data Parameters
+NAME         strychnine                
+EXPNO                 5                
+PROCNO                1                
+
+F2 - Acquisition Parameters
+Date_          20031115                
+Time              15.44                
+INSTRUM          dpx300                
+PROBHD     5 mm QNP 1H/                
+PULPROG          zgpg30                
+TD                65536                
+SOLVENT           CDCl3                
+NS                 2048                
+DS                    4                
+SWH           18832.393 Hz             
+FIDRES         0.287360 Hz             
+AQ            1.7400308 sec            
+RG                 4096                
+DW               26.550 usec           
+DE                 6.00 usec           
+TE                300.0 K              
+D1           2.00000000 sec            
+d11          0.03000000 sec            
+d12          0.00002000 sec            
+
+============ CHANNEL f1 =============
+NUC1                13C                
+P1                 5.60 usec           
+PL1               -6.00 dB             
+SFO1         75.4760200 MHz            
+
+============ CHANNEL f2 =============
+CPDPRG2         waltz16                
+NUC2                 1H                
+PCPD2             80.00 usec           
+PL2                0.00 dB             
+PL12              20.00 dB             
+PL13              24.00 dB             
+SFO2        300.1312005 MHz            
+
+F2 - Processing parameters
+SI                32768                
+SF           75.4677489 MHz            
+WDW                  EM                
+SSB                   0                
+LB                 1.00 Hz             
+GB                    0                
+PC                 1.40                
+
+1D NMR plot parameters
+CX                20.00 cm             
+F1P             215.000 ppm            
+F1             16225.57 Hz             
+F2P              -5.000 ppm            
+F2              -377.34 Hz             
+PPMCM          11.00000 ppm/cm         
+HZCM          830.14526 Hz/cm          

@@ -1,0 +1,29 @@
+do_apk():  16  ref points found
+do_apk(): sort completed, calculating phase, count2 = 16
+# 0    freq = 9725.690560    width = 4    phi = 16.604454   quadrant = 0   phase = 16.604454
+# 1    freq = 9384.882202    width = 3    phi = 18.888466   quadrant = 0   phase = 18.888466
+# 2    freq = 9227.409200    width = 3    phi = 13.161469   quadrant = 0   phase = 13.161469
+# 3    freq = 8778.553672    width = 4    phi = 34.666944   quadrant = 0   phase = 34.666944
+# 4    freq = 5853.234036    width = 3    phi = 41.569782   quadrant = 0   phase = 41.569782
+# 5    freq = 5844.038533    width = 5    phi = 19.150026   quadrant = 0   phase = 19.150026
+# 6    freq = 5811.854269    width = 5    phi = 11.865977   quadrant = 0   phase = 11.865977
+# 7    freq = 5779.670006    width = 5    phi = 4.353784   quadrant = 0   phase = 4.353784
+# 8    freq = 4867.590976    width = 3    phi = 1.345208   quadrant = 0   phase = 1.345208
+# 9    freq = 4555.518567    width = 3    phi = 1.224646   quadrant = 0   phase = 1.224646
+# 10    freq = 4520.460709    width = 4    phi = 4.503580   quadrant = 0   phase = 4.503580
+# 11    freq = 3967.581045    width = 4    phi = 11.387414   quadrant = 0   phase = 11.387414
+# 12    freq = 3798.038945    width = 4    phi = 0.774905   quadrant = 0   phase = 0.774905
+# 13    freq = 3623.324373    width = 4    phi = 1.644259   quadrant = 0   phase = 1.644259
+# 14    freq = 3202.055357    width = 5    phi = 70.840053   quadrant = 3   phase = 340.840053
+# 15    freq = 2372.161142    width = 4    phi = 10.681892   quadrant = 0   phase = 10.681892
+do_apk(): doing least squares
+   first pass: ph0 = 56.155530;    ph1 = -140.606201
+
+   fine tune: angle = 0.000000    integral = 1460195870.000000
+   fine tune: angle = 10.000000    integral = 1526971462.000000
+   fine tune: angle = 5.000000    integral = 1543032819.000000
+   fine tune: angle = 2.500000    integral = 1546663867.000000
+   fine tune: angle = 1.250000    integral = 1547375540.000000
+   fine tune: angle = 0.625000    integral = 1547455207.000000
+   fine tune: angle = 0.312500    integral = 1547425988.000000
+   fine tune: angle = -0.156250    integral = 1547446345.000000
