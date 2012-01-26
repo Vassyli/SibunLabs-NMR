@@ -24,7 +24,7 @@
 import numpy
 import scipy
 
-from PyQt4 import QtCore, QtGui
+from PyQt4 import QtCore, QtGui, QtOpenGL
 
 # View modes
 NMRView1DFid = 1
@@ -77,8 +77,19 @@ class NMRView(QtGui.QGraphicsView):
         
         self.o_main_window = centralwidget.parentWidget()
         self.o_main = self.o_main_window.getApplicationObject()
-
+        
         self.initScenes()
+        
+        self.setBackgroundBrush(QtGui.QBrush(QtGui.QColor('white')))
+        
+        widget = QtOpenGL.QGLWidget()
+        widget.setAutoFillBackground(True)
+        widget.qglClearColor(QtGui.QColor('white'))
+        self.setViewport(widget)
+        # Empty Scene
+        self.setScene(NMRScene())
+        
+        self.setRenderHints(QtGui.QPainter.Antialiasing | QtGui.QPainter.SmoothPixmapTransform)
         
     def initScenes(self):
         self.fid_scene = NMRScene()
@@ -138,7 +149,7 @@ class NMRView(QtGui.QGraphicsView):
         )
         
     def drawFidPlot(self):
-        self.fid_items["plot"] = PlotItem(self.x(0), self.y(0), self.getXWidth(), self.getYHeight())
+        self.fid_items["plot"] = FidPlotItem(self.x(0), self.y(0), self.getXWidth(), self.getYHeight())
         self.fid_scene.addItem(self.fid_items["plot"])
         
         data = self.o_main.getNMR().getFid()
@@ -146,18 +157,20 @@ class NMRView(QtGui.QGraphicsView):
         # Create a polygon with n items
         #polygon = QtGui.QPolygonF(data.shape[-1])
         x0 = 0
-        y0 = float(self.getYHeight()) / (-2) * (data[0].real)
-        path = QtGui.QPainterPath(QtCore.QPointF(x0, y0))
+        y0 = 1.0 / (-2) * (data[0].real)
+        #path = QtGui.QPainterPath(QtCore.QPointF(x0, y0))
+        path = QtGui.QPainterPath(self.fid_items["plot"].point(x0, y0))
         
         # Add points to the polygon
         for i in numpy.arange(1, data.shape[-1]):
-            x = float(self.getXWidth()) / data.shape[-1] * i
-            y = float(self.getYHeight()) / (-2) * (data[i].real)
+            x = 1.0 / data.shape[-1] * i
+            y = 1.0 / (-2) * (data[i].real)
             # y-points may vary from -height....+height and are in item-coordinates of PlotItem
             # This ensures a zoom where y = 0 always stays on the same position. No more bouncing
             # plots! Still have to invert + and -.
             #polygon[i] = QtCore.QPointF(x, y)
-            path.lineTo(QtCore.QPointF(x, y))
+            #path.lineTo(QtCore.QPointF(x, y))
+            path.lineTo(self.fid_items["plot"].point(x, y))
             
             
         #print polygon.first()
@@ -169,11 +182,12 @@ class NMRView(QtGui.QGraphicsView):
             
     def drawSpc(self):
         self.drawSpcAxis()
+        self.drawSpcPlot()
         
         # Group items together
         self.spc_resize_group = self.spc_scene.createItemGroup([
             self.spc_items["axis"], 
-            #self.spc_items["plot"],
+            self.spc_items["plot"],
         ])
         
         self.spc_is_drawn = True
@@ -184,6 +198,39 @@ class NMRView(QtGui.QGraphicsView):
             self.x(0, True), self.y(0 - self.x1_axis_padding_top)
         )
         pass
+    
+    def drawSpcPlot(self):
+        self.spc_items["plot"] = SpcPlotItem(self.x(0), self.y(0), self.getXWidth(), self.getYHeight())
+        self.spc_scene.addItem(self.spc_items["plot"])
+        
+        data = self.o_main.getNMR().getSpectrum()
+        
+        # Create a polygon with n items
+        #polygon = QtGui.QPolygonF(data.shape[-1])
+        x0 = 0
+        y0 = 1.0 / (-2) * (data[0].real)
+        path = QtGui.QPainterPath(self.spc_items["plot"].point(x0, y0))
+        
+        # Add points to the polygon
+        for i in numpy.arange(1, data.shape[-1]):
+            #x = float(self.getXWidth()) / data.shape[-1] * i
+            #y = float(self.getYHeight()) / (-2) * (data[i].real)
+            x = 1.0 / data.shape[-1] * i
+            y = 1.0 / (-2) * (data[i].real)
+            # y-points may vary from -height....+height and are in item-coordinates of PlotItem
+            # This ensures a zoom where y = 0 always stays on the same position. No more bouncing
+            # plots! Still have to invert + and -.
+            #polygon[i] = QtCore.QPointF(x, y)
+            #path.lineTo(QtCore.QPointF(x, y))
+            path.lineTo(self.spc_items["plot"].point(x, y))
+        
+        # Draw to the bottom - and back.
+        #path.lineTo(QtCore.QPointF(1, 0))
+        #path.lineTo(QtCore.QPointF(0, 0))
+            
+        self.spc_items["plot_real"] = self.spc_scene.addPath(path)
+        self.spc_items["plot_real"].setParentItem(self.spc_items["plot"])
+    
     
     # Transform-Qt-to-plot-coordinations (x: →, y: ↑ instead of x: →, y: ↓)
     def x(self, x, reverse = False):
@@ -314,8 +361,14 @@ class NMRView(QtGui.QGraphicsView):
         
         if self.show_mode == NMRView1DFid:
             self.fid_items["plot"].scale(1, zoom_factor)
-            
+        elif self.show_mode == NMRView1DSpectrum:
+            self.spc_items["plot"].scale(1, zoom_factor)
+                     
 class PlotItem(QtGui.QGraphicsRectItem):
+    def paint(self, a, b, c):
+        pass
+        
+class FidPlotItem(PlotItem):
     x = 0
     y = 0
     w = 0
@@ -323,20 +376,44 @@ class PlotItem(QtGui.QGraphicsRectItem):
     
     def __init__(self, x, my, w, h):
         """y is the "middle"""
-        super(PlotItem, self).__init__()
+        super(FidPlotItem, self).__init__()
         
         self.x = x
         self.y = my
         self.w = w
         self.h = h
         
-        self.translate(0, my - h/2)
+        self.translate(0, my - h/2 - 0.5)
         self.setRect(x, -h/2.0, w, h)
         
-    def paint(self, painter, b, c):
-        pass
-        #painter.setBrush(self.scene().backgroundBrush())
-        #super(PlotItem, self).paint(painter, b, c)
+    def point(self, x, y):
+        """ Maps x 0...1 to 0..w and y -1..1 to -h..h"""
+        return QtCore.QPointF(round(self.w * x, 2), round(self.h * y, 2))
+        
+class SpcPlotItem(PlotItem):
+    x = 0
+    y = 0
+    w = 0
+    h = 0
+    
+    def __init__(self, x, y, w, h):
+        super(SpcPlotItem, self).__init__()
+        
+        print "Create Box at Position %s,%s " % (x, y)
+        print "Translate position %s,%s to %s,%s" % (x, y, x+0, -h)
+        
+        self.x = x
+        self.y = y
+        self.w = w
+        self.h = h
+        
+        self.translate(0, y)
+        self.setRect(x, -h, w, h*2)
+        
+    def point(self, x, y):
+        """ Maps x 0...1 to 0..w and y -1..1 to -h..h"""
+        return QtCore.QPointF(round(self.w * x, 2), round(self.h*2 * y, 2))
+
             
 class NMRScene(QtGui.QGraphicsScene):
     pass

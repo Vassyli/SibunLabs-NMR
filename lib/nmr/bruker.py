@@ -140,8 +140,8 @@ class BrukerNMR_1D(nmr_prototype.NMR_1D):
             data = data[...,::2] + data[...,1::2]*1.j
             
             # Normalize to 1
-            a = data.max()
-            i = abs(data.min())
+            a = data.real.max()
+            i = abs(data.real.min())
             
             if a > i:
                 data /= a
@@ -169,13 +169,13 @@ class BrukerNMR_1D(nmr_prototype.NMR_1D):
             
     def getSpectrum(self):
         if self.spectrum == None:
-            real = numpy.fromfile(self.getSpectrumPath(1), dtype="<i4")
-            imag = numpy.fromfile(self.getSpectrumPath(2), dtype="<i4")
+            real = numpy.fromfile(self.getSpectrumPath(1), dtype=">i4")
+            imag = numpy.fromfile(self.getSpectrumPath(2), dtype=">i4")
             
             data = real + imag*1j
             
             # Normalize to 1
-            a = data.max
+            a = data.max()
             i = abs(data.min())
             
             if a > i:
