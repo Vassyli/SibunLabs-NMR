@@ -112,6 +112,17 @@ phases = {
     }    
 }
 
+# Konstanten
+AQ_mod_SIM = 1
+AQ_mod_SEQ = 2
+AQ_mod_DSP = 3
+
+BigEndian = 1
+LittleEndian = 0
+
+Bruker_BigEndian = 1
+Bruker_LittleEndian = 0
+
 
 # Information about the bruker files are taken from the reference material 
 #   and fileutil.cs from SpinWorks.
@@ -120,9 +131,72 @@ phases = {
 # Thanks to the authors of this great program and for providing those files
 #   which were a great help to understand those files.
 
-class BrukerNMR_1D(nmr_prototype.NMR_1D):
+class BrukerNMR(nmr_prototype.NMR):
+    acqu = {}
+    proc = {}
+    
+    aq_mod = None
+    
+    def __init__(self, path):
+        super(BrukerNMR, self).__init__(path)
+        
+        self.readAcqu()
+        self.readProc()
+        
+    def readBrukerInfo(self, filename, variables):
+        storage = {}
+        
+        for line in open(filename):
+            if len(line) > 3:
+                parts = list(line.partition('='))
+                parts[0] = parts[0].strip().strip(' ><').lstrip('#$')
+                parts[2] = parts[2].strip().strip(' ><')
+                
+                # EOF
+                if parts[0] == "END":
+                    break
+                elif parts[0] in variables:
+                    storage[parts[0]] = variables[parts[0]](parts[2])
+        
+        return storage
+        
+    def getAcquPath(self):
+        return os.path.join(self.getPath(), "acqus")
+        
+    def readAcqu(self):
+        filename = self.getAcquPath()
+        self.acqu = self.readBrukerInfo(self.getAcquPath(), searchAcqu)
+        
+        if self.acqu['AQ_mod'] == 1 or self.acqu['AQ_mod'] == 3:
+            self.aq_mod = AQ_mod_SIM
+        elif self.acqu['AQ_mod'] == 2:
+            self.aq_mod = AQ_mod_SEQ
+            
+        if self.acqu['DECIM'] > 1:
+            self.aq_mod = AQ_mod_DSP
+        
+    def getProcPath(self):
+        return os.path.join(self.getPath(), "pdata", "1", "procs")
+        
+    def readProc(self):
+        filename = self.getProcPath()
+        self.proc = self.readBrukerInfo(self.getProcPath(), searchProc)
+
+    def getAq_mod(self):
+        return self.aq_mod
+        
+    def getAcquByteorder(self):
+        return BigEndian if self.acqu["BYTORDA"] == Bruker_BigEndian else LittleEndian
+        
+    def getProcByteorder(self):
+        return BigEndian if self.proc["BYTORDP"] == Bruker_BigEndian else LittleEndian
+
+class BrukerNMR_1D(nmr_prototype.NMR_1D, BrukerNMR):
     fid = None
     spectrum = None
+    
+    def __init__(self, path):
+        super(BrukerNMR_1D, self).__init__(path)
     
     def getFidPath(self):
         return os.path.join(self.getPath(), "fid")
@@ -136,7 +210,12 @@ class BrukerNMR_1D(nmr_prototype.NMR_1D):
         
     def getFid(self):
         if self.fid == None:
-            data = numpy.fromfile(self.getFidPath(), dtype=">i4")	
+            if self.getAcquByteorder() == BigEndian:
+                datatype = '>i4'
+            else:
+                datatype = '<i4'
+                
+            data = numpy.fromfile(self.getFidPath(), dtype=datatype)	
             data = data[...,::2] + data[...,1::2]*1.j
             
             # Normalize to 1
@@ -169,8 +248,13 @@ class BrukerNMR_1D(nmr_prototype.NMR_1D):
             
     def getSpectrum(self):
         if self.spectrum == None:
-            real = numpy.fromfile(self.getSpectrumPath(1), dtype=">i4")
-            imag = numpy.fromfile(self.getSpectrumPath(2), dtype=">i4")
+            if self.getProcByteorder() == BigEndian:
+                datatype = '>i4'
+            else:
+                datatype = '<i4'
+                
+            real = numpy.fromfile(self.getSpectrumPath(1), dtype=datatype)
+            imag = numpy.fromfile(self.getSpectrumPath(2), dtype=datatype)
             
             data = real + imag*1j
             
