@@ -127,9 +127,8 @@ Bruker_LittleEndian = 0
 # Information about the bruker files are taken from the reference material 
 #   and fileutil.cs from SpinWorks.
 #
-#
 # Thanks to the authors of this great program and for providing those files
-#   which were a great help to understand those files.
+#   which were a great help to understand bruker's format.
 
 class BrukerNMR(nmr_prototype.NMR):
     acqu = {}
@@ -270,3 +269,20 @@ class BrukerNMR_1D(nmr_prototype.NMR_1D, BrukerNMR):
             self.spectrum = data
     
         return self.spectrum
+
+    def getSpectrumWidth(self, ppm = True):
+        """ Return the Width of the Spectra.
+        
+        Keyword arguments:
+        ppm -- True to return ppm, False to return Hertz
+        
+        """
+        if ppm == True:
+            return self.acqu['SW']
+            
+    def getSpectrumHighestPPMValue(self):
+        """ Return the highest ppm-value (on the "left" side) """
+        return (self.acqu['SFO1'] / self.proc['SF'] - 1) * 1.0e6 + 0.5 * self.acqu['SW'] * (self.acqu['SFO1'] / self.proc['SF'])
+        
+    def getSpectrumLowestPPMValue(self):
+        return self.getSpectrumHighestPPMValue() - self.getSpectrumWidth()

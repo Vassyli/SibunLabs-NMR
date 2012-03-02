@@ -21,6 +21,8 @@
 #  
 #  
 
+import math
+
 import numpy
 import scipy
 
@@ -49,6 +51,7 @@ class NMRView(QtGui.QGraphicsView):
     
     spc_items = {
         "axis" : None,
+        "axis_items" : None,
         "plot" : None,
     }
     
@@ -155,10 +158,8 @@ class NMRView(QtGui.QGraphicsView):
         data = self.o_main.getNMR().getFid()
         
         # Create a polygon with n items
-        #polygon = QtGui.QPolygonF(data.shape[-1])
         x0 = 0
         y0 = 1.0 / (-2) * (data[0].real)
-        #path = QtGui.QPainterPath(QtCore.QPointF(x0, y0))
         path = QtGui.QPainterPath(self.fid_items["plot"].point(x0, y0))
         
         # Add points to the polygon
@@ -168,15 +169,8 @@ class NMRView(QtGui.QGraphicsView):
             # y-points may vary from -height....+height and are in item-coordinates of PlotItem
             # This ensures a zoom where y = 0 always stays on the same position. No more bouncing
             # plots! Still have to invert + and -.
-            #polygon[i] = QtCore.QPointF(x, y)
-            #path.lineTo(QtCore.QPointF(x, y))
             path.lineTo(self.fid_items["plot"].point(x, y))
-            
-            
-        #print polygon.first()
-        #print polygon.last()
-            
-        #self.fid_items["plot_real"] = self.fid_scene.addPolygon(polygon)
+
         self.fid_items["plot_real"] = self.fid_scene.addPath(path)
         self.fid_items["plot_real"].setParentItem(self.fid_items["plot"])
             
@@ -186,18 +180,20 @@ class NMRView(QtGui.QGraphicsView):
         
         # Group items together
         self.spc_resize_group = self.spc_scene.createItemGroup([
-            self.spc_items["axis"], 
+            self.spc_items["axis"],
             self.spc_items["plot"],
         ])
         
         self.spc_is_drawn = True
         
-    def drawSpcAxis(self):
-        self.spc_items["axis"] = self.spc_scene.addLine(
-            self.x(0), self.y(0 - self.x1_axis_padding_top), 
-            self.x(0, True), self.y(0 - self.x1_axis_padding_top)
+    def drawSpcAxis(self):        
+        self.spc_items["axis"] = SpcAxisItem(
+            self.x(0), self.y(0 - self.x1_axis_padding_top), self.getXWidth(), self.getYHeight(),
+            self.o_main.getNMR().getSpectrumHighestPPMValue(),
+            self.o_main.getNMR().getSpectrumLowestPPMValue()
         )
-        pass
+        
+        self.spc_scene.addItem(self.spc_items["axis"])
     
     def drawSpcPlot(self):
         self.spc_items["plot"] = SpcPlotItem(self.x(0), self.y(0), self.getXWidth(), self.getYHeight())
@@ -206,28 +202,20 @@ class NMRView(QtGui.QGraphicsView):
         data = self.o_main.getNMR().getSpectrum()
         
         # Create a polygon with n items
-        #polygon = QtGui.QPolygonF(data.shape[-1])
         x0 = 0
         y0 = 1.0 / (-2) * (data[0].real)
         path = QtGui.QPainterPath(self.spc_items["plot"].point(x0, y0))
         
         # Add points to the polygon
         for i in numpy.arange(1, data.shape[-1]):
-            #x = float(self.getXWidth()) / data.shape[-1] * i
-            #y = float(self.getYHeight()) / (-2) * (data[i].real)
             x = 1.0 / data.shape[-1] * i
             y = 1.0 / (-2) * (data[i].real)
             # y-points may vary from -height....+height and are in item-coordinates of PlotItem
             # This ensures a zoom where y = 0 always stays on the same position. No more bouncing
             # plots! Still have to invert + and -.
-            #polygon[i] = QtCore.QPointF(x, y)
-            #path.lineTo(QtCore.QPointF(x, y))
             path.lineTo(self.spc_items["plot"].point(x, y))
         
-        # Draw to the bottom - and back.
-        #path.lineTo(QtCore.QPointF(1, 0))
-        #path.lineTo(QtCore.QPointF(0, 0))
-            
+      
         self.spc_items["plot_real"] = self.spc_scene.addPath(path)
         self.spc_items["plot_real"].setParentItem(self.spc_items["plot"])
     
@@ -297,6 +285,7 @@ class NMRView(QtGui.QGraphicsView):
             
         if self.spc_resize_group != None:
             self.spc_resize_group.setTransform(transform, True)
+            self.spc_items["axis"].relocateAxis()
                    
         # (0,0) to the left bottom corner
         self.setSceneRect(self.scene_corner, -self.canvas_height, new_width, new_height)
@@ -399,9 +388,6 @@ class SpcPlotItem(PlotItem):
     def __init__(self, x, y, w, h):
         super(SpcPlotItem, self).__init__()
         
-        print "Create Box at Position %s,%s " % (x, y)
-        print "Translate position %s,%s to %s,%s" % (x, y, x+0, -h)
-        
         self.x = x
         self.y = y
         self.w = w
@@ -413,8 +399,324 @@ class SpcPlotItem(PlotItem):
     def point(self, x, y):
         """ Maps x 0...1 to 0..w and y -1..1 to -h..h"""
         return QtCore.QPointF(round(self.w * x, 2), round(self.h*2 * y, 2))
+        
+class AxisItem(QtGui.QGraphicsRectItem):
+    x = 0
+    y = 0
+    w = 0
+    h = 0
+    
+    childs = []
+    childs_dict = {}
+    
+    def __init__(self, x, y, w, h):
+        super(AxisItem, self).__init__(x, y, w, h)
+        
+        self.childs = []
+        self.childs_dict = {}
+        
+        self.x = x
+        self.y = y
+        self.w = w
+        self.h = h
+        
+        self.translate(0, y)
+        self.setRect(x, -h, w, h*2)
+        
+        self.drawAxis()
+        
+    def paint(self, a, b, c):
+        pass
+        
+    def point(self, x, y):
+        """ Maps x 0...1 to 0..w and y -1..1 to -h..h"""
+        #return QtCore.QPointF(round(self.w * x, 2), round(self.h*2 * y, 2))
+        return QtCore.QPointF(self.toX(x), self.toY(y))
+        
+    def toX(self, x):
+        return round(self.w * x, 2)
+        
+    def toY(self, y):
+        return round(self.h*2 * y, 2)
+        
+    def drawAxis(self):
+        axis = QtGui.QGraphicsLineItem(QtCore.QLineF(self.point(0, 0), self.point(1, 0)))
+        axis.setParentItem(self)
+        
+    def relocateAxis(self):        
+        for child in self.childs:
+            child.relocate()
+            
+    def addChild(self, identifier, child):
+        if isinstance(child, AxisSubItem):
+            self.childs.append(child)
+            self.childs_dict[identifier] = child
+        else:
+            raise ValueError("child has to be an object of the class gui.AxisSubItem")
+            
+    def removeChild(self, identifier):
+        child = self.childs_dict[identifier]
+        self.scene().removeItem(child)
+        self.childs.remove(child)
+        del self.childs_dict[identifier]
+        
+class SpcAxisItem(AxisItem):
+    ppmmax = 20
+    ppmmin = 0
+    
+    axiscaptionelements = []
+    mode = None
+    
+    def __init__(self, x, y, w, h, ppmmax, ppmmin):
+        # Has to set first some variables, since parent.__init__ calls directly drawAxis which needs them.
+        self.ppmmax = ppmmax
+        self.ppmmin = ppmmin
+        
+        super(SpcAxisItem, self).__init__(x, y, w, h)
+        
+    def drawAxis(self):
+        super(SpcAxisItem, self).drawAxis()
+        self.addChild("unit", AxisTextItem("ppm", self, 1, y = 20, align = AlignRight))
+        
+        self.createAxisCaption()
+        
+    def ppm2x(self, ppm):
+        m = 1.0/(self.ppmmin - self.ppmmax)
+        q = self.ppmmax/(self.ppmmax - self.ppmmin)
+        return m*ppm + q
+        
+    def clearAxisCaption(self):
+        for child in self.axiscaptionelements:
+            self.removeChild(child)
+        
+        # Empty it.
+        self.axiscaptionelements = []
+            
+    def createAxisCaption(self):
+        if self.mode == None:
+            self.mode = self.getNumberOfNumbers()
+            
+        specwidth = self.ppmmax - self.ppmmin
+        
+        # Search an appropriate start point - zero?
+        if self.ppmmin < 0 and self.ppmmax > 0:
+            start = 0
+        else:
+            start = round(round(specwidth) / 2, 0)
+            
+        rangeUpwards = numpy.arange(start, self.ppmmax + 1, self.mode).tolist()
+        rangeUpwards.sort()
+        rangeDownwards = numpy.arange(start, self.ppmmin - 1, -1*self.mode).tolist()
+        rangeDownwards.sort()
+        if len(rangeDownwards) > 0:
+            rangeDownwards.pop() # Remove start
+        rangeDownwards.extend(rangeUpwards)
+        
+        if self.mode % 1 == 0:
+            rangeDownwards = map(int, rangeDownwards)
+        
+        specLeftPPMMark = math.ceil(self.ppmmax) if self.ppmmax < 0 else math.floor(self.ppmmax)
+        specRightPPMMark = math.ceil(self.ppmmin) if self.ppmmin < 0 else math.floor(self.ppmmin)
+        
+        # Done the preparation - create the actual items.
+        for i in rangeDownwards:
+            idf = "caption_%s" % (i, )
+            idt = "captiontick_%s" % (i, )
+            loc = self.ppm2x(i)
+            
+            iLess = i - self.mode
+            
+            # Do not paint if the location is < 0 or > 1
+            if loc >= 0 and loc <= 1:
+                # Draw the figure!
+                self.addChild(idf, AxisTextItem(str(i), self, loc, AlignCenter))
+                self.axiscaptionelements.append(idf)
+                
+                # Draw the "line"
+                self.addChild(idt, AxisTickItem(self, loc, TickBig))
+                self.axiscaptionelements.append(idt)
+                
+            # Draw Subticks
+            if self.mode >= 1.0:
+                submode = self.mode / 10.0
+            elif self.mode >= 0.5:
+                submode = self.mode / 5.0
+            else:
+                submode = 1
+            
+            if submode < 1:
+                start = i
+                
+                subrangeUpwards = numpy.arange(start, self.ppmmax + 1, submode).tolist()
+                subrangeUpwards.sort()
+                subrangeDownwards = numpy.arange(start, self.ppmmin - 1, -1*submode).tolist()
+                subrangeDownwards.sort()
+                if len(subrangeDownwards) > 0:
+                    subrangeDownwards.pop() # Remove start
+                subrangeDownwards.extend(subrangeUpwards)
+                
+                for j in subrangeDownwards:
+                    subidt = "%s_subtick_%s" % (idf, j, )
+                    subloc = self.ppm2x(j)
+                    
+                    if subloc >= 0 and subloc <= 1 and subloc != loc:
+                        self.addChild(subidt, AxisTickItem(self, subloc, TickSmall))
+                        self.axiscaptionelements.append(subidt)
+        
+    def relocateAxis(self):
+        mode = self.getNumberOfNumbers()
+        
+        if mode != self.mode:
+            self.mode = mode
+            # Delete all numbers
+            self.clearAxisCaption()
+            
+            # Add Axis-Numbers!
+            self.createAxisCaption()
+        
+        # Call parent's
+        super(SpcAxisItem, self).relocateAxis()
+        
+    def getNumberOfNumbers(self):
+        # Until I find something more flexible, I'll have to deal with this.
+        # Maybe I have to discriminate between nuclei... Still not sure.
+        # 50 is just an replaceable figure..
+        foobar = 50
+        approximation = round(self.mapRectToScene(self.boundingRect()).width()/foobar)
+        if approximation < 4.5:
+            approximation = 4
+        elif approximation < 7.5:
+            approximation = 5
+        elif approximation < 12.5:
+            approximation = 10
+        elif approximation < 27.5:
+            approximation = 20
+        #elif approximation < 80:
+        else:
+            approximation = 40
+        #elif approximation < 180:
+        #    approximation = 100
+        #else:
+        #    approximation = 200
+            
+        width = self.ppmmax - self.ppmmin
+        steps = round(width / approximation * 2, 0) / 2
+        
+        # Make sure there are no "0" steps
+        if steps <= 0.1:
+            steps = 0.1
+            
+        return steps
+    
 
+        
+AlignLeft = 1
+AlignRight = 2
+AlignCenter = 3
+
+TickSmall = 1
+TickBig = 2
+
+class AxisSubItem(object):
+    pass
+        
+class AxisTextItem(AxisSubItem, QtGui.QGraphicsTextItem):
+    item = None
+    align = None
+    parent = None
+    x = 1
+    y = 0
+    
+    anchor = None
+    
+    def __init__(self, text, parent, x = 1, align = AlignLeft, y = 0):
+        super(AxisTextItem, self).__init__(text, parent)
+        self.align = align
+        self.parent = parent
+        self.x = x
+        self.y = y
+        
+        self.setFlag(QtGui.QGraphicsItem.ItemIgnoresTransformations)
+        
+        self.setFont(QtGui.QFont("Helvetica", 10, QtGui.QFont.Normal, False))
+        self.setTextWidth(self.boundingRect().width())
+        
+        # Block-Format
+        blockformat = QtGui.QTextBlockFormat()
+        
+        if self.align == AlignRight:
+            blockformat.setAlignment(QtCore.Qt.AlignRight)
+        elif self.align == AlignCenter:
+            blockformat.setAlignment(QtCore.Qt.AlignCenter)
+        else:
+            blockformat.setAlignment(QtCore.Qt.AlignLeft)
+        
+        # Cursor
+        cursor = self.textCursor()
+        cursor.select(QtGui.QTextCursor.Document)
+        cursor.mergeBlockFormat(blockformat)
+        cursor.clearSelection()
+        
+        # Set cursor
+        self.setTextCursor(cursor)
+        
+        self.locate()
+        
+    def locate(self):
+        self.relocate(False)
+        
+    def relocate(self, relocate = True):
+        """ Relocate this item on the axis to allow a smooth zoom."""
+        x = self.parent.toX(self.x)
+        
+        if self.align == AlignRight:
+            x = x - self.mapRectFromScene(self.boundingRect()).width()
+        elif self.align == AlignCenter:
+            x = x - self.mapRectFromScene(self.boundingRect()).width()/2.0
+        else:
+            x = x
+        
+        self.setPos(QtCore.QPointF(x, self.y))
+        
+class AxisTickItem(AxisSubItem, QtGui.QGraphicsLineItem):
+    item = None
+    align = None
+    parent = None
+    x = 1
+    y = 0
+    
+    def __init__(self, parent, x = 1, type = TickSmall):
+        super(AxisTickItem, self).__init__(parent)
+        self.type = type
+        self.parent = parent
+        self.x = x
+        
+        self.setFlag(QtGui.QGraphicsItem.ItemIgnoresTransformations)
+        
+        # set Line:
+        if type == TickSmall:
+            self.setLine(0, 0, 0, 3)
+        else:
+            self.setLine(0, 0, 0, 5)
+            
+        self.locate()
+            
+    def locate(self):
+        self.relocate(False)
+        
+    def relocate(self, relocate = True):
+        """ Relocate this item on the axis to allow a smooth zoom."""
+        x = self.parent.toX(self.x)
+        
+        self.setPos(QtCore.QPointF(x, self.y))
+        
             
 class NMRScene(QtGui.QGraphicsScene):
     pass
+    
+# Debug
+def printTransformation(o):
+    print "\t%s, %s, %s" % (o.m11(), o.m12(), o.m13())
+    print "\t%s, %s, %s" % (o.m21(), o.m22(), o.m23())
+    print "\t%s, %s, %s" % (o.m31(), o.m32(), o.m33())
     
